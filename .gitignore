@@ -1,0 +1,7 @@
+*.log
+venv/
+bin/
+include/
+lib/
+man/
+app/static/.webassets-cache/
