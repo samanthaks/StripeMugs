@@ -47,7 +47,9 @@ def register_logger(app):
 
 def register_blueprints(app):
     from app.routes import client
+    from app.routes import payment
     app.register_blueprint(client)
+    app.register_blueprint(payment)
 
 def register_scss():
     assets.url = app.static_url_path
