@@ -5,19 +5,6 @@
 {% block body %}
 
 {{ macros.display_header() }}
-<form action="/charge" method="post">
-    <article>
-      <label>
-        <span>Amount is $5.00</span>
-      </label>
-    </article>
-
-    <script src="https://checkout.stripe.com/checkout.js" class="stripe-button"
-            data-key="{{ key }}"
-            data-description="A Flask Charge"
-            data-amount="500"
-            data-locale="auto"></script>
-n</form>
 
 <section>
 	<ul>
@@ -28,7 +15,13 @@ n</form>
 					<h4>{{ item['description'] }}</h4>
 					<img src={{ item['imgUrl'] }} width='200' height='200'>
 					<p>Price: {{ item['price'] }}</p>
-					<button type='button' name='purchase-button'>Purchase</button>
+					<form action="/charge" method="post">
+					    <script src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+					            data-key="{{ key }}"
+					            data-description="A Flask Charge"
+					            data-amount={{ item['price'] * 100 }}
+					            data-locale="auto"></script>
+					</form>
 				</div>
 			</li>
 		{% endfor %}

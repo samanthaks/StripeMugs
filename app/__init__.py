@@ -23,7 +23,6 @@ def create_app(**config_overrides):
     register_scss()
     register_blueprints(app)
     register_logger(app)
-    
 
     return app
 
