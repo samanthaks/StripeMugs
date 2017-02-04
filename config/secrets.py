@@ -1,2 +1,0 @@
-SECRET_KEY = ''
-CSRF_SESSION_KEY = ''

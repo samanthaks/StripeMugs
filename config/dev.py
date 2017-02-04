@@ -8,6 +8,8 @@ try:
     # Secret Values
     CSRF_SESSION_KEY = secrets.CSRF_SESSION_KEY
     SECRET_KEY = secrets.SECRET_KEY
+    STRIPE_SECRET_KEY = secrets.STRIPE_TEST_SECRET_KEY
+    STRIPE_PUBLISHABLE_KEY = secrets.STRIPE_TEST_PUBLISHABLE_KEY
 
     # Flask configurations
     HOST = '0.0.0.0'

@@ -1,5 +1,6 @@
 import json
 import logging
+import os
 
 from flask import Flask
 from flask.ext.assets import Environment, Bundle
@@ -18,11 +19,19 @@ def create_app(**config_overrides):
     app.config.update(config_overrides)
 
     assets = Environment(app)
+    register_keys()
     register_scss()
     register_blueprints(app)
     register_logger(app)
+    
 
     return app
+
+
+def register_keys():
+    os.environ['SECRET_KEY'] = app.config['STRIPE_SECRET_KEY']
+    os.environ['PUBLISHABLE_KEY'] = app.config['STRIPE_PUBLISHABLE_KEY']
+
 
 def register_logger(app):
     """Create an error logger and attach it to ``app``."""
