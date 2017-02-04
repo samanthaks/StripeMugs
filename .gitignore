@@ -5,3 +5,4 @@ include/
 lib/
 man/
 app/static/.webassets-cache/
+*.pyc
