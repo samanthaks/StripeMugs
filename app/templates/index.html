@@ -7,25 +7,11 @@
 {{ macros.display_header() }}
 
 <section>
-	<ul>
-		{% for item in storeItems %}
-			<li>
-				<div class='store-item'>
-					<h3>{{ item['itemName'] }}</h3>
-					<h4>{{ item['description'] }}</h4>
-					<img src={{ item['imgUrl'] }} width='200' height='200'>
-					<p>Price: {{ item['price'] }}</p>
-					<form action="/charge" method="post">
-					    <script src="https://checkout.stripe.com/checkout.js" class="stripe-button"
-					            data-key="{{ key }}"
-					            data-description="A Flask Charge"
-					            data-amount={{ item['price'] * 100 }}
-					            data-locale="auto"></script>
-					</form>
-				</div>
-			</li>
-		{% endfor %}
-	</ul>
+	<form enctype="application/json" action="/auth" method="post">
+	    <input type="text" name="username" value="1@test.com">
+	    <input type="password" name="password" value="test">
+	    <input type="submit" value="Register">
+	</form>
 </section>
 
 {{ macros.display_footer() }}

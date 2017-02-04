@@ -1,1 +1,1 @@
-from Player import Player
+from User import User, username_table, userid_table

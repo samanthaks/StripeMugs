@@ -54,9 +54,10 @@ def register_logger(app):
     app.logger.addHandler(app_handler)
 
 def register_blueprints(app):
-    from app.routes import client
-    from app.routes import payment
-    app.register_blueprint(client)
+    from app.routes import index, auth, store, payment
+    app.register_blueprint(index)
+    app.register_blueprint(auth)
+    app.register_blueprint(store)
     app.register_blueprint(payment)
 
 def register_scss():

@@ -12,9 +12,10 @@ stripe.api_key = stripe_keys['secret_key']
 
 payment = Blueprint('payment', __name__)
 
-@payment.route('/')
-def index():
-    return render_template('index.html', key=stripe_keys['publishable_key'])
+
+# @payment.route('/')
+# def index():
+#     return render_template('index.html', key=stripe_keys['publishable_key'])
 
 @payment.route('/charge', methods=['POST'])
 def charge():
