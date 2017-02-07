@@ -2,11 +2,18 @@ from flask import session, redirect, url_for, render_template, request, jsonify,
 from flask_jwt import JWT, jwt_required, current_identity
 from werkzeug.security import safe_str_cmp
 from .. import app
-from ..models import username_table, userid_table
+from ..models.User import username_table, userid_table
 
 
 auth = Blueprint('auth', __name__)
 
+@app.route('/auth', methods=['POST'])
+def auth_form():
+	user = authenticate(request.form['username'], request.form['password'])
+	if user is not None:
+		return "success"
+	else:
+		return "fail"
 
 def authenticate(username, password):
     user = username_table.get(username, None)
