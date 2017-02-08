@@ -1,34 +1,42 @@
-from flask import session, redirect, url_for, render_template, request, jsonify, Response, flash, Blueprint
-from flask_jwt import JWT, jwt_required, current_identity
-from werkzeug.security import safe_str_cmp
+from flask import Flask, jsonify, request, Blueprint, redirect, url_for
+from flask_jwt_extended import JWTManager, jwt_required,\
+	create_access_token, get_jwt_identity, set_access_cookies
 from .. import app
-from ..models.User import username_table, userid_table
 
 
+# Setup the Flask-JWT-Extended extension
+jwt = JWTManager(app)
 auth = Blueprint('auth', __name__)
 
-@app.route('/auth', methods=['POST'])
-def auth_form():
-	user = authenticate(request.form['username'], request.form['password'])
-	if user is not None:
-		return "success"
-	else:
-		return "fail"
 
-def authenticate(username, password):
-    user = username_table.get(username, None)
-    print(user)
-    if user and safe_str_cmp(user.password.encode('utf-8'), password.encode('utf-8')):
-        return user
+# Provide a method to create access tokens. The create_access_token()
+# function is used to actually generate the token
+@auth.route('/login', methods=['POST'])
+def login():
+	username = request.form['username']
+	password = request.form['password']
+	if username != '1@test.com' or password != 'test':
+		return jsonify({"msg": "Bad username or password"}), 401
 
-def identity(payload):
-    user_id = payload['identity']
-    print(user_id)
-    return userid_table.get(user_id, None)
+	# Identity can be any data that is json serializable
+	access_token = create_access_token(identity=username)
+	ret = {'access_token': access_token}
+	resp = jsonify(ret)
+	set_access_cookies(resp, access_token)
+	print resp.data
 
-jwt = JWT(app, authenticate, identity)
+	return redirect(url_for('store.list_items'))
 
-@auth.route('/protected')
-@jwt_required()
+
+# Protect a view with jwt_required, which requires a valid access token
+# in the request to access.
+@auth.route('/protected', methods=['GET'])
+@jwt_required
 def protected():
-    return '%s' % current_identity
+	# Access the identity of the current user with get_jwt_identity
+	current_user = get_jwt_identity()
+	return jsonify({'current_user': current_user}), 200
+
+
+if __name__ == '__main__':
+	app.run()

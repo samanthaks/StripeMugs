@@ -4,6 +4,7 @@ import os
 
 from flask import Flask
 from flask.ext.assets import Environment, Bundle
+from flask_cors import CORS, cross_origin
 
 
 app = None
@@ -23,6 +24,8 @@ def create_app(**config_overrides):
     register_scss()
     register_blueprints(app)
     register_logger(app)
+
+    CORS(app)
 
     return app
 

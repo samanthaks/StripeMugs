@@ -16,6 +16,9 @@ try:
     PORT = 5000
     DEBUG = True
 
+    # JWT
+    JWT_TOKEN_LOCATION = ['cookies']
+
     # Meta
     META_TITLE = ''
     META_DESCRIPTION = ''
