@@ -1,6 +1,6 @@
 from flask import Flask, jsonify, request, Blueprint, redirect, url_for, session
 from flask_jwt_extended import JWTManager, jwt_required,\
-	create_access_token, get_jwt_identity, set_access_cookies, create_refresh_token, set_refresh_cookies
+	create_access_token, get_jwt_identity, set_access_cookies, create_refresh_token, set_refresh_cookies, unset_jwt_cookies
 from .. import app
 
 
@@ -22,13 +22,11 @@ def login():
 	access_token = create_access_token(identity=username)
 	refresh_token = create_refresh_token(identity=username)
 	ret = {'access_token': access_token}
-	resp = jsonify(ret)
+	resp = redirect(url_for('store.list_items'))
 	set_access_cookies(resp, access_token)
 	set_refresh_cookies(resp, refresh_token)
 
-	print resp.data
-
-	return resp, 200
+	return resp
 
 
 # Because the JWTs are stored in an httponly cookie now, we cannot
@@ -39,10 +37,9 @@ def login():
 @app.route('/logout', methods=['GET'])
 @jwt_required
 def logout():
-    resp = jsonify({'logout': True})
+    resp = redirect(url_for('index.landing'))
     unset_jwt_cookies(resp)
-    return resp, 200
-
+    return resp
 
 
 # Protect a view with jwt_required, which requires a valid access token
