@@ -1,7 +1,7 @@
-from flask import session, redirect, url_for, render_template, request, jsonify, Response, flash, Blueprint
+from flask import session, redirect, url_for, render_template, request, jsonify, Response, flash, Blueprint, session
 import requests
 import json
-from flask_jwt_extended import jwt_required
+from flask_jwt_extended import JWTManager, jwt_required
 
 
 store = Blueprint('store', __name__)

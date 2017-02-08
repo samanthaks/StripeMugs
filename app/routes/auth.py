@@ -1,6 +1,6 @@
-from flask import Flask, jsonify, request, Blueprint, redirect, url_for
+from flask import Flask, jsonify, request, Blueprint, redirect, url_for, session
 from flask_jwt_extended import JWTManager, jwt_required,\
-	create_access_token, get_jwt_identity, set_access_cookies
+	create_access_token, get_jwt_identity, set_access_cookies, create_refresh_token, set_refresh_cookies
 from .. import app
 
 
@@ -20,12 +20,29 @@ def login():
 
 	# Identity can be any data that is json serializable
 	access_token = create_access_token(identity=username)
+	refresh_token = create_refresh_token(identity=username)
 	ret = {'access_token': access_token}
 	resp = jsonify(ret)
 	set_access_cookies(resp, access_token)
+	set_refresh_cookies(resp, refresh_token)
+
 	print resp.data
 
-	return redirect(url_for('store.list_items'))
+	return resp, 200
+
+
+# Because the JWTs are stored in an httponly cookie now, we cannot
+# log the user out by simply deleting the cookie in the frontend.
+# We need the backend to send us a response to delete the cookies
+# in order to logout. unset_jwt_cookies is a helper function to
+# do just that.
+@app.route('/logout', methods=['GET'])
+@jwt_required
+def logout():
+    resp = jsonify({'logout': True})
+    unset_jwt_cookies(resp)
+    return resp, 200
+
 
 
 # Protect a view with jwt_required, which requires a valid access token
