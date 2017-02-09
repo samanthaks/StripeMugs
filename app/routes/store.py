@@ -26,20 +26,20 @@ def list_items():
 
 @store.route('/charge', methods=['POST'])
 def charge():
-    # Amount in cents
-    amount = 500
+
+    amount = int(request.form['amount'])
 
     customer = stripe.Customer.create(
-        email='customer@example.com',
+        email=request.form['stripeEmail'],
         source=request.form['stripeToken']
     )
 
     charge = stripe.Charge.create(
         customer=customer.id,
-        amount=amount,
+        amount=amount*100,
         currency='usd',
         description='Flask Charge'
     )
 
-    return render_template('charge.html', amount=amount)
+    return render_template('charges.html', amount=amount)
 

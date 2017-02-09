@@ -1,4 +1,14 @@
-{% extends "layout.html" %}
-{% block content %}
-  <h2>Thanks, you paid <strong>$5.00</strong>!</h2>
+{% extends "base.html" %}
+{% import "macros.html" as macros %}
+{% block title %}{% endblock %}
+
+{% block body %}
+
+{{ macros.display_header() }}
+
+  <h2>Thanks, you paid <strong>{{amount}}</strong>!</h2>
+
+
+{{ macros.display_footer() }}
+
 {% endblock %}

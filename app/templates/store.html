@@ -20,7 +20,9 @@
 					            data-key={{ key }}
 					            data-description={{ item['itemName'] }}
 					            data-amount={{ item['price'] * 100 }}
-					            data-locale="auto"></script>
+					            data-locale="auto">
+					    </script>
+					    <input type="hidden" name="amount" value={{item['price']}}>
 					</form>
 				</div>
 			</li>
