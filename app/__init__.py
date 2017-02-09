@@ -4,16 +4,19 @@ import os
 
 from flask import Flask
 from flask.ext.assets import Environment, Bundle
+import boto3
 from flask_cors import CORS, cross_origin
 
 
 app = None
 assets = None
-
+db = None
 
 def create_app(**config_overrides):
     global app
     global assets
+    global db
+
     app = Flask(__name__)
 
     app.config.from_object('config.dev')
@@ -22,12 +25,19 @@ def create_app(**config_overrides):
     assets = Environment(app)
     register_keys()
     register_scss()
+    db = register_db(app)
     register_blueprints(app)
     register_logger(app)
 
     CORS(app)
 
     return app
+
+def register_db(app):
+    boto_session = boto3.session.Session(aws_access_key_id=app.config['AWS_ACCESS_KEY_ID'],
+            aws_secret_access_key=app.config['AWS_SECRET_ACCESS_KEY'])
+    db = boto_session.resource('dynamodb',region_name='us-west-2')
+    return db
 
 
 def register_keys():
