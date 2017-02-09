@@ -5,7 +5,6 @@ from flask_jwt_extended import JWTManager, jwt_required
 from .. import db
 
 
-
 store = Blueprint('store', __name__)
 
 
