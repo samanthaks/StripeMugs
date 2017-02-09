@@ -5,6 +5,7 @@ from flask_jwt_extended import JWTManager, jwt_required
 from .. import db
 import os
 import stripe
+from datetime import datetime
 
 
 store = Blueprint('store', __name__)
@@ -40,6 +41,19 @@ def charge():
         currency='usd',
         description='Flask Charge'
     )
+
+    count = db.Table('Transactions').item_count
+    i = datetime.now()
+    response = db.Table('Transactions').put_item(
+	   Item={
+	        'trans_id': count + 1,
+	        'customer': customer.id,
+	        'email': request.form['stripeEmail'],
+	        'amount': amount,
+	        'date': i.strftime('%Y/%m/%d %H:%M:%S'),
+	        'item_id': request.form['id']
+	    }
+	)
 
     return render_template('charges.html', amount=amount)
 
