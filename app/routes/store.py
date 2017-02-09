@@ -7,7 +7,6 @@ import os
 import stripe
 
 
-
 store = Blueprint('store', __name__)
 
 stripe_keys = {
