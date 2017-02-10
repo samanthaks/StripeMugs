@@ -1,10 +1,10 @@
 from flask import Flask, jsonify, request, Blueprint, redirect, url_for, session
 from flask_jwt_extended import JWTManager, jwt_required,\
 	create_access_token, get_jwt_identity, set_access_cookies, create_refresh_token, set_refresh_cookies, unset_jwt_cookies
-from .. import app, db
+from .. import application, db
 from boto3.dynamodb.conditions import Key, Attr
 
-
+app = application
 # Setup the Flask-JWT-Extended extension
 jwt = JWTManager(app)
 auth = Blueprint('auth', __name__)
@@ -31,7 +31,7 @@ def login():
 			return resp
 
 	return jsonify({"msg": "Bad username or password"}), 401
-	
+
 
 
 # Because the JWTs are stored in an httponly cookie now, we cannot
