@@ -3,15 +3,15 @@ from sys import stderr, exit
 
 
 try:
-    import secrets
+    # import secrets
 
     # Secret Values
-    CSRF_SESSION_KEY = secrets.CSRF_SESSION_KEY
-    SECRET_KEY = secrets.SECRET_KEY
-    STRIPE_SECRET_KEY = secrets.STRIPE_TEST_SECRET_KEY
-    STRIPE_PUBLISHABLE_KEY = secrets.STRIPE_TEST_PUBLISHABLE_KEY
-    AWS_ACCESS_KEY_ID = secrets.AWS_ACCESS_KEY_ID
-    AWS_SECRET_ACCESS_KEY = secrets.AWS_SECRET_ACCESS_KEY
+    # CSRF_SESSION_KEY = secrets.CSRF_SESSION_KEY
+    # SECRET_KEY = secrets.SECRET_KEY
+    # STRIPE_SECRET_KEY = secrets.STRIPE_TEST_SECRET_KEY
+    # STRIPE_PUBLISHABLE_KEY = secrets.STRIPE_TEST_PUBLISHABLE_KEY
+    # AWS_ACCESS_KEY_ID = secrets.AWS_ACCESS_KEY_ID
+    # AWS_SECRET_ACCESS_KEY = secrets.AWS_SECRET_ACCESS_KEY
 
     # Flask configurations
     HOST = '0.0.0.0'

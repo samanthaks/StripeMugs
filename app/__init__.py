@@ -18,7 +18,10 @@ def create_app(**config_overrides):
 
     application = Flask(__name__)
 
-    application.config.from_object('config.dev')
+    # application.config.from_object('config.dev')
+    application.config.from_pyfile('../config/dev.py')
+    application.config.from_pyfile('../config/secrets.py')
+    # print application.config
     application.config.update(config_overrides)
 
     assets = Environment(application)
