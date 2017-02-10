@@ -8,16 +8,16 @@ import boto3
 from flask_cors import CORS, cross_origin
 
 
-app = None
+app = application = None
 assets = None
 db = None
 
 def create_app(**config_overrides):
-    global app
+    global app, application
     global assets
     global db
 
-    app = Flask(__name__)
+    application = app = Flask(__name__)
 
     app.config.from_object('config.dev')
     app.config.update(config_overrides)
