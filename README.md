@@ -1,4 +1,16 @@
-# StripeMugs
+# Project 1
+
+### Design
+All requirements implemented and work as expected. Live at http://flask-env.ewci6eha2v.us-west-2.elasticbeanstalk.com/
+
+Our stack is Flask for back-end, Jinja for templating, DynamoDB for storage, flask_jwt_extended for auth, and Stripe for payments.
+
+We have a few architectural improvements that we will implement moving forwards such as:
+- Splitting routes into /services and /client
+- Running each service as an independent application process
+- Placing the DB query code in the connector rather than the services
+
+
 
 ### Developing
 ```bash
@@ -9,33 +21,9 @@ python run.py
 ```
 
 
-
-### Spec
-
-1. Sign up for a Stripe test account (one per team).
-
-2. Implement three simple pages:
-  - Logon to your projects customer server (UID/password),
-  - Get a list of “things” for which you can pay,
-  - Simulated credit card transaction via Stripe,
-  - Result flows from UI to your servers,
-
-3. Three simple serverless/microservices:
-  - (Gateway) Validate the credit card token/info,
-  - (User) Verify UID/PW; record customer payment,
-  - (Payments) Update payment records,
-
-4. Integrate into an end-to-end flow
-
-5. As-A-Service platforms:
-  - Amazon S3 for web site,
-  - One:
-    - Service on Elastic Beanstalk,
-    - Table/DB in Aurora,
-    - You may use local servers for the others,
-
-  - JWT token between:
-    - UI,
-    - User service,
-
-  - Basic REST API, but do not need to use API Gateway (yet).
+### Team
+- Raymond Xu, rx2125
+- Eunice Kokor, eek2138
+- Samantha Stultz, sks2200
+- Jake Kwon, jk3655
+- Michelle Lu, ml3720
