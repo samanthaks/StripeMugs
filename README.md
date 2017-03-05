@@ -6,7 +6,7 @@
 
 ### Developing
 
-Running the application
+Running the entire application
 
 ```bash
 virtualenv venv
@@ -19,7 +19,6 @@ Cleaning up
 
 ```bash
 make down
-deactivate
 ```
 
 

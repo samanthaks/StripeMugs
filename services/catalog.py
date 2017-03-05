@@ -65,4 +65,4 @@ def charge():
 
 
 if __name__ == "__main__":
-    app.run(port=5002, instance_relative_config=True)
+    app.run(port=5002)

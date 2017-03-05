@@ -32,7 +32,6 @@ def login():
 	return jsonify({"msg": "Bad username or password"}), 401
 	
 
-
 # Because the JWTs are stored in an httponly cookie now, we cannot
 # log the user out by simply deleting the cookie in the frontend.
 # We need the backend to send us a response to delete the cookies
