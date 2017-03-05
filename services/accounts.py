@@ -1,18 +1,17 @@
 from flask import Flask, jsonify, request, Blueprint, redirect, url_for, session
 from flask_jwt_extended import JWTManager, jwt_required,\
 	create_access_token, get_jwt_identity, set_access_cookies, create_refresh_token, set_refresh_cookies, unset_jwt_cookies
-from .. import app, db
 from boto3.dynamodb.conditions import Key, Attr
 
 
 # Setup the Flask-JWT-Extended extension
+app = Flask(__name__)
 jwt = JWTManager(app)
-auth = Blueprint('auth', __name__)
 
 
 # Provide a method to create access tokens. The create_access_token()
 # function is used to actually generate the token
-@auth.route('/login', methods=['POST'])
+@app.route('/login', methods=['POST'])
 def login():
 	username = request.form['username']
 	password = request.form['password']
@@ -49,7 +48,7 @@ def logout():
 
 # Protect a view with jwt_required, which requires a valid access token
 # in the request to access.
-@auth.route('/protected', methods=['GET'])
+@app.route('/protected', methods=['GET'])
 @jwt_required
 def protected():
 	# Access the identity of the current user with get_jwt_identity
@@ -58,4 +57,4 @@ def protected():
 
 
 if __name__ == '__main__':
-	app.run()
+	app.run(port=5001)
