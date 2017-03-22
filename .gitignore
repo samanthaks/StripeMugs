@@ -7,3 +7,4 @@ man/
 app/static/.webassets-cache/
 *.pyc
 config/secrets.py
+**/config.py

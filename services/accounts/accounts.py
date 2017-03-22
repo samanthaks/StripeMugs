@@ -1,12 +1,16 @@
 from flask import Flask, jsonify, request, Blueprint, redirect, url_for, session
 from flask_jwt_extended import JWTManager, jwt_required,\
 	create_access_token, get_jwt_identity, set_access_cookies, create_refresh_token, set_refresh_cookies, unset_jwt_cookies
+import boto3
 from boto3.dynamodb.conditions import Key, Attr
 
 
 # Setup the Flask-JWT-Extended extension
 app = Flask(__name__)
+app.config.from_object('config')
 jwt = JWTManager(app)
+boto_session = boto3.session.Session(aws_access_key_id=app.config['AWS_ACCESS_KEY_ID'], aws_secret_access_key=app.config['AWS_SECRET_ACCESS_KEY'])
+db = boto_session.resource('dynamodb',region_name='us-west-2')
 
 
 # Provide a method to create access tokens. The create_access_token()
