@@ -5,7 +5,8 @@ from flask_jwt_extended import JWTManager, jwt_required
 import os
 import boto3
 from datetime import datetime
-
+from bson import json_util
+import json
 
 app = Flask(__name__)
 app.config.from_object('config')
@@ -22,11 +23,10 @@ db = boto_session.resource('dynamodb',region_name='us-west-2')
 
 
 @app.route('/store', methods=['GET'])
-@jwt_required
 def list_items():
 	items_dict = db.Table('items').scan()
-	return render_template('store.html', storeItems=items_dict['Items'], key=stripe_keys['publishable_key'])
-
+	# return jsonify(storeItems=items_dict['Items'])
+	return json.dumps(items_dict, default=json_util.default)
 
 # MOVE TO PAYMENTS MICROSERVICE
 

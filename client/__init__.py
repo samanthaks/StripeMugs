@@ -38,8 +38,9 @@ def register_db(app):
     return db
 
 def register_keys():
-    os.environ['SECRET_KEY'] = app.config['STRIPE_SECRET_KEY']
-    os.environ['PUBLISHABLE_KEY'] = app.config['STRIPE_PUBLISHABLE_KEY']
+    print app.config
+    os.environ['SECRET_KEY'] = app.config['STRIPE_TEST_SECRET_KEY']
+    os.environ['PUBLISHABLE_KEY'] = app.config['STRIPE_TEST_PUBLISHABLE_KEY']
 
 def register_scss():
     assets.url = app.static_url_path
