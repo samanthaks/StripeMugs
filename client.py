@@ -1,21 +1,50 @@
-from flask import render_template, redirect
+from flask import render_template, redirect, request, jsonify, json
 from client import create_app
+import requests
+import os
 
 app = create_app()
 
+ACCOUNTS_URL="https://i9p6a7vjqf.execute-api.us-west-2.amazonaws.com/prod/apps/accounts/{id}"
+CATALOGUE_URL="https://i9p6a7vjqf.execute-api.us-west-2.amazonaws.com/prod/apps/catalog/1"
+stripe_keys = {
+  'secret_key': os.environ['SECRET_KEY'],
+  'publishable_key': os.environ['PUBLISHABLE_KEY']
+}
+
+# stripe.api_key = stripe_keys['secret_key']
 @app.route('/', methods=['GET'])
 def landing():
-	return render_template('index.html')
+  return render_template('index.html')
 
 @app.route('/storeItem', methods=['GET'])
 def test():
-	# 
-	# use this json to render storeItem page
-	return redirect("https://i9p6a7vjqf.execute-api.us-west-2.amazonaws.com/prod/apps/catalog/2")
+  #
+  # use this json to render storeItem page
+  response = requests.get(CATALOGUE_URL).json()
+  # items_dict = jsonify(json.loads(response.text))
+  items_dict = response
+  # items_dict = {}
+  # items_dict['price'] = str(response['price']).encode('utf-8')
+  # items_dict['itemName'] = str(response['itemName'])
+  # items_dict['imgUrl'] = str(response['imgUrl'])
+  # items_dict['description'] = str(response['description'])
+  # items_dict['id'] = str(response['id'])
 
-@app.route('/accounts', methods=['GET'])
-	# account
-	return redirect("https://i9p6a7vjqf.execute-api.us-west-2.amazonaws.com/prod/apps/accounts/{id}")
+  print items_dict
+
+  return render_template('store.html', item=items_dict, key=stripe_keys['publishable_key'])
+
+  # return redirect("https://i9p6a7vjqf.execute-api.us-west-2.amazonaws.com/prod/apps/catalog/2")
+
+# @app.route('/accounts', methods=['GET'])
+# def getAccounts():
+#   request = requests.get(ACCOUNTS_URL)
+#   print json.dumps(request.json)
+#   items_dict = json.dumps(request.json)
+#   # return render_template()
+#   return render_template('store.html', storeItems=items_dict['Items'], key=stripe_keys['publishable_key'])
+
 
 # customer
 # https://i9p6a7vjqf.execute-api.us-west-2.amazonaws.com/prod/apps/customers/{id}
@@ -44,15 +73,15 @@ def test():
 
 #     i = datetime.now()
 #     response = db.Table('Transactions').put_item(
-# 	   Item={
-# 	        'trans_id': count + 1,
-# 	        'customer': customer.id,
-# 	        'email': request.form['stripeEmail'],
-# 	        'amount': amount,
-# 	        'date': i.strftime('%Y/%m/%d %H:%M:%S'),
-# 	        'item_id': request.form['item_id']
-# 	    }
-# 	)
+#      Item={
+#           'trans_id': count + 1,
+#           'customer': customer.id,
+#           'email': request.form['stripeEmail'],
+#           'amount': amount,
+#           'date': i.strftime('%Y/%m/%d %H:%M:%S'),
+#           'item_id': request.form['item_id']
+#       }
+#   )
 
 #     return render_template('charges.html', amount=amount)
 
