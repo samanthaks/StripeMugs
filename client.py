@@ -6,7 +6,7 @@ import os
 app = create_app()
 
 ACCOUNTS_URL="https://i9p6a7vjqf.execute-api.us-west-2.amazonaws.com/prod/apps/accounts/{id}"
-CATALOGUE_URL="https://i9p6a7vjqf.execute-api.us-west-2.amazonaws.com/prod/apps/catalog/1"
+CATALOGUE_URL="https://i9p6a7vjqf.execute-api.us-west-2.amazonaws.com/prod/apps/catalog"
 stripe_keys = {
   'secret_key': os.environ['SECRET_KEY'],
   'publishable_key': os.environ['PUBLISHABLE_KEY']
@@ -16,6 +16,12 @@ stripe_keys = {
 @app.route('/', methods=['GET'])
 def landing():
   return render_template('index.html')
+
+@app.route('/charge', methods=['GET'])
+def getCharge():
+  print "RECEIVED CHARGE!"
+  amount = int(request.args.get('amount'))
+  return render_template("charges.html", amount=amount)
 
 @app.route('/storeItem', methods=['GET'])
 def test():
@@ -32,8 +38,9 @@ def test():
   # items_dict['id'] = str(response['id'])
 
   print items_dict
+  print "STRIPE KEYS {}".format(stripe_keys)
 
-  return render_template('store.html', item=items_dict, key=stripe_keys['publishable_key'])
+  return render_template('store.html', storeItems=items_dict, key=stripe_keys['publishable_key'])
 
   # return redirect("https://i9p6a7vjqf.execute-api.us-west-2.amazonaws.com/prod/apps/catalog/2")
 
@@ -88,4 +95,4 @@ def test():
 
 
 if __name__ == "__main__":
-    app.run(port=5000)
+    app.run(port=8080)
