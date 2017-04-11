@@ -5,7 +5,9 @@ import os
 
 app = create_app()
 
-ACCOUNTS_URL="https://i9p6a7vjqf.execute-api.us-west-2.amazonaws.com/prod/apps/accounts/{id}"
+ACCOUNTS_URL="https://i9p6a7vjqf.execute-api.us-west-2.amazonaws.com/prod/apps/accounts/"
+# ACCOUNTS_URL="https://i9p6a7vjqf.execute-api.us-west-2.amazonaws.com/prod/apps/accounts/test@test.com"
+
 CATALOGUE_URL="https://i9p6a7vjqf.execute-api.us-west-2.amazonaws.com/prod/apps/catalog"
 stripe_keys = {
   'secret_key': os.environ['SECRET_KEY'],
@@ -23,11 +25,32 @@ def getCharge():
   amount = int(request.args.get('amount'))
   return render_template("charges.html", amount=amount)
 
+@app.route('/transactions', methods=["GET"])
+def getTransactions():
+    ACCOUNTS_URL="https://i9p6a7vjqf.execute-api.us-west-2.amazonaws.com/prod/apps/payments/"
+
+    account_email = request.args.get('email')
+    transactions_list = requests.get(ACCOUNTS_URL).json()
+    print transactions_list
+    transactions = []
+
+    #only the transactions for this user
+    for t in transactions_list:
+      if t["email"] == account_email:
+        transactions.append(t)
+
+    return render_template("transactions.html", transactions=transactions)
+
+  # link to user's tranactions / email / name
 @app.route('/storeItem', methods=['GET'])
 def test():
   #
   # use this json to render storeItem page
   response = requests.get(CATALOGUE_URL).json()
+
+  # The email shouldd be from the user info that is logged in
+  email = "test@test.com"
+
   # items_dict = jsonify(json.loads(response.text))
   items_dict = response
   # items_dict = {}
@@ -40,7 +63,7 @@ def test():
   print items_dict
   print "STRIPE KEYS {}".format(stripe_keys)
 
-  return render_template('store.html', storeItems=items_dict, key=stripe_keys['publishable_key'])
+  return render_template('store.html', storeItems=items_dict, key=stripe_keys['publishable_key'], email=email)
 
   # return redirect("https://i9p6a7vjqf.execute-api.us-west-2.amazonaws.com/prod/apps/catalog/2")
 
