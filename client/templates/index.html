@@ -14,6 +14,17 @@
 	</form>
 </section>
 
+<div>Or, create an account below</div>
+
+<section>
+	<form enctype="application/json" action="/join" method="post">
+		<input type="text" name="email" value="name@example.com">
+	    <input type="text" name="username" value="1@test.com">
+	    <input type="password" name="password" value="test">
+	    <input type="submit" value="Create Account">
+	</form>
+</section>
+
 {{ macros.display_footer() }}
 
 {% endblock %}
