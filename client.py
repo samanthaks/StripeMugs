@@ -1,4 +1,4 @@
-from flask import render_template, redirect, request, jsonify, json
+from flask import render_template, redirect, request, jsonify, json, url_for
 from client import create_app
 import requests
 import os
@@ -19,9 +19,28 @@ stripe_keys = {
 def landing():
   return render_template('index.html')
 
+
+@app.route('/login', methods=['POST'])
+def login():
+  LOGIN_URL = 'https://i9p6a7vjqf.execute-api.us-west-2.amazonaws.com/prod/apps/customers/'
+  params = {
+  	'username': request.form.get('username'),
+  	'password': request.form.get('password')
+  }
+  r = requests.get(LOGIN_URL, params=params)
+  print(r.url)
+  print(r.json())
+  if 'Item' in r.json()['body']:
+  	# Success
+  	return redirect(url_for('store'))
+  else:
+  	# Fail
+  	return redirect(url_for('landing'))
+
+
 @app.route('/charge', methods=['GET'])
 def getCharge():
-  print "RECEIVED CHARGE!"
+  # print "RECEIVED CHARGE!"
   amount = int(request.args.get('amount'))
   return render_template("charges.html", amount=amount)
 
@@ -31,7 +50,7 @@ def getTransactions():
 
     account_email = request.args.get('email')
     transactions_list = requests.get(ACCOUNTS_URL).json()
-    print transactions_list
+    # print transactions_list
     transactions = []
 
     #only the transactions for this user
@@ -43,7 +62,7 @@ def getTransactions():
 
   # link to user's tranactions / email / name
 @app.route('/storeItem', methods=['GET'])
-def test():
+def store():
   #
   # use this json to render storeItem page
   response = requests.get(CATALOGUE_URL).json()
@@ -60,8 +79,8 @@ def test():
   # items_dict['description'] = str(response['description'])
   # items_dict['id'] = str(response['id'])
 
-  print items_dict
-  print "STRIPE KEYS {}".format(stripe_keys)
+  # print items_dict
+  # print "STRIPE KEYS {}".format(stripe_keys)
 
   return render_template('store.html', storeItems=items_dict, key=stripe_keys['publishable_key'], email=email)
 
