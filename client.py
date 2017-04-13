@@ -30,12 +30,26 @@ def login():
   r = requests.get(LOGIN_URL, params=params)
   print(r.url)
   print(r.json())
-  if 'Item' in r.json()['body']:
+  if r.json() and 'body' in r.json() and 'Item' in r.json()['body']:
   	# Success
   	return redirect(url_for('store'))
   else:
   	# Fail
   	return redirect(url_for('landing'))
+
+
+@app.route('/join', methods=['POST'])
+def join():
+  SIGNUP_URL = 'https://i9p6a7vjqf.execute-api.us-west-2.amazonaws.com/prod/apps/customers/'
+  params = {
+  	'username': request.form.get('username'),
+  	'password': request.form.get('password')
+  }
+  print params
+  r = requests.post(SIGNUP_URL, params=params)
+  print(r.url)
+  print(r.json())
+  return redirect(url_for('landing'))
 
 
 @app.route('/charge', methods=['GET'])
