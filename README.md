@@ -1,26 +1,13 @@
-# Project 2
+# Project 3
 
-### Design
-
-
-
-### Developing
-
-Running the entire application
+### Development
 
 ```bash
 virtualenv venv
 source venv/bin/activate
 pip install -r config/requirements.txt
-make up
+python client.py
 ```
-
-Cleaning up
-
-```bash
-make down
-```
-
 
 ### Team
 - Raymond Xu, rx2125
