@@ -2,6 +2,7 @@ from flask import render_template, redirect, request, jsonify, json, url_for, se
 from client import create_app
 import requests
 import os
+import boto3
 
 app = create_app()
 
@@ -13,6 +14,30 @@ stripe_keys = {
   'secret_key': os.environ['SECRET_KEY'],
   'publishable_key': os.environ['PUBLISHABLE_KEY']
 }
+
+# Get the service resource
+sqs = boto3.resource('sqs', region_name='us-west-2')
+# Get the queue
+queue = sqs.get_queue_by_name(QueueName='StripeMugsQueue')
+
+while(1):
+  queue()
+
+def queue():
+  # Process messages by printing out body and optional author name
+  for message in queue.receive_messages(MessageAttributeNames=['Author']):
+    # Get the custom author message attribute if it was set
+    author_text = ''
+    if message.message_attributes is not None:
+        author_name = message.message_attributes.get('Author').get('StringValue')
+        if author_name:
+            author_text = ' ({0})'.format(author_name)
+
+    # Print out the body and author (if set)
+    print('Hello, {0}!{1}'.format(message.body, author_text))
+
+    # Let the queue know that the message is processed
+    message.delete()
 
 # stripe.api_key = stripe_keys['secret_key']
 @app.route('/', methods=['GET'])
@@ -28,6 +53,10 @@ def login():
   	'password': request.form.get('password')
   }
   r = requests.get(LOGIN_URL, params=params)
+
+  # Create a new message
+  response = queue.send_message(MessageBody='login detected')
+  
   print(r.url)
   print(r.json())
   if r.json() and 'body' in r.json() and 'Item' in r.json()['body']:
@@ -103,7 +132,7 @@ def store():
 
   # print items_dict
   # print "STRIPE KEYS {}".format(stripe_keys)
-
+  
   return render_template('store.html', storeItems=items_dict, key=stripe_keys['publishable_key'], email=email)
 
   # return redirect("https://i9p6a7vjqf.execute-api.us-west-2.amazonaws.com/prod/apps/catalog/2")
