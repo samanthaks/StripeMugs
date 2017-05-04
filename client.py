@@ -1,4 +1,4 @@
-from flask import render_template, redirect, request, jsonify, json, url_for
+from flask import render_template, redirect, request, jsonify, json, url_for, session
 from client import create_app
 import requests
 import os
@@ -31,8 +31,10 @@ def login():
   print(r.url)
   print(r.json())
   if r.json() and 'body' in r.json() and 'Item' in r.json()['body']:
-  	# Success
-  	return redirect(url_for('store'))
+    # Success
+    session['jwt'] = r.json()['headers']['authorizationToken']
+    print session['jwt']
+    return redirect(url_for('store'))
   else:
   	# Fail
   	return redirect(url_for('landing'))
@@ -77,15 +79,21 @@ def getTransactions():
   # link to user's tranactions / email / name
 @app.route('/storeItem', methods=['GET'])
 def store():
-  #
-  # use this json to render storeItem page
-  response = requests.get(CATALOGUE_URL).json()
+  print "store GETALL"
+  headers = {'authorizationtoken': session.get('jwt')}
+  print headers
+  response = requests.get(CATALOGUE_URL, headers=headers)
+  print response.json()
+
+  if response.status_code == 401:
+    return '401 Unauthorized'
+
 
   # The email shouldd be from the user info that is logged in
   email = "test@test.com"
 
   # items_dict = jsonify(json.loads(response.text))
-  items_dict = response
+  items_dict = response.json()
   # items_dict = {}
   # items_dict['price'] = str(response['price']).encode('utf-8')
   # items_dict['itemName'] = str(response['itemName'])
