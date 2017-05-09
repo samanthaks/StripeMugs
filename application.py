@@ -4,7 +4,7 @@ import requests
 import os
 import boto3
 
-app = create_app()
+application = create_app()
 
 ACCOUNTS_URL="https://i9p6a7vjqf.execute-api.us-west-2.amazonaws.com/prod/apps/accounts/"
 # ACCOUNTS_URL="https://i9p6a7vjqf.execute-api.us-west-2.amazonaws.com/prod/apps/accounts/test@test.com"
@@ -40,12 +40,12 @@ def queue():
     message.delete()
 
 # stripe.api_key = stripe_keys['secret_key']
-@app.route('/', methods=['GET'])
+@application.route('/', methods=['GET'])
 def landing():
   return render_template('index.html')
 
 
-@app.route('/login', methods=['POST'])
+@application.route('/login', methods=['POST'])
 def login():
   LOGIN_URL = 'https://i9p6a7vjqf.execute-api.us-west-2.amazonaws.com/prod/apps/customers/'
   params = {
@@ -56,7 +56,7 @@ def login():
 
   # Create a new message
   response = queue.send_message(MessageBody='login detected')
-  
+
   print(r.url)
   print(r.json())
   if r.json() and 'body' in r.json() and 'Item' in r.json()['body']:
@@ -69,7 +69,7 @@ def login():
   	return redirect(url_for('landing'))
 
 
-@app.route('/join', methods=['POST'])
+@application.route('/join', methods=['POST'])
 def join():
   SIGNUP_URL = 'https://i9p6a7vjqf.execute-api.us-west-2.amazonaws.com/prod/apps/customers/'
   params = {
@@ -83,13 +83,13 @@ def join():
   return redirect(url_for('landing'))
 
 
-@app.route('/charge', methods=['GET'])
+@application.route('/charge', methods=['GET'])
 def getCharge():
   # print "RECEIVED CHARGE!"
   amount = int(request.args.get('amount'))
   return render_template("charges.html", amount=amount)
 
-@app.route('/transactions', methods=["GET"])
+@application.route('/transactions', methods=["GET"])
 def getTransactions():
     ACCOUNTS_URL="https://i9p6a7vjqf.execute-api.us-west-2.amazonaws.com/prod/apps/payments/"
 
@@ -106,7 +106,7 @@ def getTransactions():
     return render_template("transactions.html", transactions=transactions)
 
   # link to user's tranactions / email / name
-@app.route('/storeItem', methods=['GET'])
+@application.route('/storeItem', methods=['GET'])
 def store():
   print "store GETALL"
   headers = {'authorizationtoken': session.get('jwt')}
@@ -132,7 +132,7 @@ def store():
 
   # print items_dict
   # print "STRIPE KEYS {}".format(stripe_keys)
-  
+
   return render_template('store.html', storeItems=items_dict, key=stripe_keys['publishable_key'], email=email)
 
   # return redirect("https://i9p6a7vjqf.execute-api.us-west-2.amazonaws.com/prod/apps/catalog/2")
@@ -188,4 +188,4 @@ def store():
 
 
 if __name__ == "__main__":
-    app.run(port=8080)
+    application.run(port=8080)
