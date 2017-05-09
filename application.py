@@ -2,7 +2,8 @@ from flask import render_template, redirect, request, jsonify, json, url_for, se
 from client import create_app
 import requests
 import os
-import boto3
+import boto.sqs
+from boto.sqs.message import Message
 
 application = create_app()
 
@@ -16,28 +17,36 @@ stripe_keys = {
 }
 
 # Get the service resource
-sqs = boto3.resource('sqs', region_name='us-west-2')
+# sqs = boto3.resource('sqs', region_name='us-west-2')
 # Get the queue
-queue = sqs.get_queue_by_name(QueueName='StripeMugsQueue')
+print "LISTING QUEUES"
+# conn = boto.sqs.connect_to_region("us-west-2",aws_access_key_id='AKIAJZVZLE5Z427RCPLQ',aws_secret_access_key='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')
+# # for queue in sqs.queues.all():
+# #     print(queue.url)
+# # queue = sqs.get_queue_by_name(QueueName='StripeMugsQueue')
 
-while(1):
-  queue()
+# # for queue in conn.get_all_queues():
+# #   print(queue.url)
+# global queue
+# queue = conn.get_queue('StripeMugsQueue')
+# while(1):
+#   queue()
 
-def queue():
-  # Process messages by printing out body and optional author name
-  for message in queue.receive_messages(MessageAttributeNames=['Author']):
-    # Get the custom author message attribute if it was set
-    author_text = ''
-    if message.message_attributes is not None:
-        author_name = message.message_attributes.get('Author').get('StringValue')
-        if author_name:
-            author_text = ' ({0})'.format(author_name)
+# def queue():
+#   # Process messages by printing out body and optional author name
+#   for message in queue.receive_messages(MessageAttributeNames=['Author']):
+#     # Get the custom author message attribute if it was set
+#     author_text = ''
+#     if message.message_attributes is not None:
+#         author_name = message.message_attributes.get('Author').get('StringValue')
+#         if author_name:
+#             author_text = ' ({0})'.format(author_name)
 
-    # Print out the body and author (if set)
-    print('Hello, {0}!{1}'.format(message.body, author_text))
+#     # Print out the body and author (if set)
+#     print('Hello, {0}!{1}'.format(message.body, author_text))
 
-    # Let the queue know that the message is processed
-    message.delete()
+#     # Let the queue know that the message is processed
+#     message.delete()
 
 # stripe.api_key = stripe_keys['secret_key']
 @application.route('/', methods=['GET'])
@@ -53,9 +62,19 @@ def login():
   	'password': request.form.get('password')
   }
   r = requests.get(LOGIN_URL, params=params)
+  conn = boto.sqs.connect_to_region("us-west-2",aws_access_key_id='AKIAJZVZLE5Z427RCPLQ',aws_secret_access_key='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')
+  # for queue in sqs.queues.all():
+  #     print(queue.url)
+  # queue = sqs.get_queue_by_name(QueueName='StripeMugsQueue')
 
+  # for queue in conn.get_all_queues():
+  #   print(queue.url)
+  q = conn.create_queue('myqueue')
   # Create a new message
-  response = queue.send_message(MessageBody='login detected')
+  # response = queue.send_message(MessageBody='login detected')
+  m = Message()
+  m.set_body('login detected.')
+  q.write(m)
 
   print(r.url)
   print(r.json())
@@ -63,6 +82,8 @@ def login():
     # Success
     session['jwt'] = r.json()['headers']['authorizationToken']
     print session['jwt']
+    email = "test@test.com"
+    items = getStoreItems()
     return redirect(url_for('store'))
   else:
   	# Fail
@@ -112,6 +133,9 @@ def store():
   headers = {'authorizationtoken': session.get('jwt')}
   print headers
   response = requests.get(CATALOGUE_URL, headers=headers)
+  print "RESPONSE\n"
+  print response
+  print "JSON RESPONSE\n"
   print response.json()
 
   if response.status_code == 401:
@@ -135,6 +159,26 @@ def store():
 
   return render_template('store.html', storeItems=items_dict, key=stripe_keys['publishable_key'], email=email)
 
+def getStoreItems():
+  print "store GETALL"
+  headers = {'authorizationtoken': session.get('jwt')}
+  print headers
+  response = requests.get(CATALOGUE_URL, headers=headers)
+  print "RESPONSE\n"
+  print response
+  print "JSON RESPONSE\n"
+  print response.json()
+
+  if response.status_code == 401:
+    return '401 Unauthorized'
+
+
+  # The email shouldd be from the user info that is logged in
+  email = "test@test.com"
+
+  # items_dict = jsonify(json.loads(response.text))
+  items_dict = response.json()
+  return items_dict
   # return redirect("https://i9p6a7vjqf.execute-api.us-west-2.amazonaws.com/prod/apps/catalog/2")
 
 # @app.route('/accounts', methods=['GET'])
