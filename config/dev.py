@@ -3,7 +3,7 @@ from sys import stderr, exit
 
 
 try:
-    import secrets
+    # import secrets
 
     # Secret Values
     CSRF_SESSION_KEY = secrets.CSRF_SESSION_KEY
